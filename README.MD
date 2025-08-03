@@ -24,7 +24,9 @@ enum class Side {
 Annotate it with `@EnumValues`:
 
 ```kotlin
-@EnumValues
+@EnumValues(
+    serializable = true,
+)
 enum class Side {
     Left,
     Right,
@@ -39,33 +41,49 @@ data class SideValues<out T>(
     val left: T,
     val right: T,
 ) {
-    operator fun get(side: Side): T = when (side) {
+
+    operator fun get(
+        side: Side,
+    ): T = when (side) {
         Side.Left -> left
         Side.Right -> right
     }
 
-    inline fun <R> map(transform: (side: Side, value: T) -> R): SideValues<R> = SideValues(
+    inline fun <R> map(
+        transform: (side: Side, value: T) -> R,
+    ): SideValues<R> = SideValues(
         left = transform(Side.Left, left),
         right = transform(Side.Right, right),
     )
 
-    inline fun <R> map(transform: (value: T) -> R): SideValues<R> = map { _, value ->
+    inline fun <R> map(
+        transform: (value: T) -> R,
+    ): SideValues<R> = map { _, value ->
         transform(value)
     }
 
-    inline fun <O, R> combineWith(other: SideValues<O>, combine: (side: Side, value: T, other: O) -> R): SideValues<R> = SideValues(
+    inline fun <O, R> combineWith(
+        other: SideValues<O>,
+        combine: (side: Side, value: T, other: O) -> R,
+    ): SideValues<R> = SideValues(
         left = combine(Side.Left, left, other.left),
         right = combine(Side.Right, right, other.right),
     )
 
-    inline fun <O, R> combineWith(other: SideValues<O>, combine: (value: T, other: O) -> R): SideValues<R> = combineWith(
+    inline fun <O, R> combineWith(
+        other: SideValues<O>,
+        combine: (value: T, other: O) -> R,
+    ): SideValues<R> = combineWith(
         other = other,
     ) { _, value, other ->
         combine(value, other)
     }
 
     companion object {
-        inline fun <T> create(createValue: (side: Side) -> T): SideValues<T> = SideValues(
+
+        inline fun <T> create(
+            createValue: (side: Side) -> T,
+        ): SideValues<T> = SideValues(
             left = createValue(Side.Left),
             right = createValue(Side.Right),
         )
