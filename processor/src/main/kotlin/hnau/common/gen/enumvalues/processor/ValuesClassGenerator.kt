@@ -34,7 +34,7 @@ fun generateEnumValuesClass(
         indent {
             +"$enumPropertyName: $enumClassName,"
         }
-        +"): T = when (part) {"
+        +"): T = when ($enumPropertyName) {"
         indent {
             items.forEach { (entry, property) ->
                 +"$entry -> $property"
@@ -89,6 +89,23 @@ fun generateEnumValuesClass(
         +") { _, value, other ->"
         indent {
             +"combine(value, other)"
+        }
+        +"}"
+        +""
+        +"companion object {"
+        indent {
+            +""
+            +"inline fun <T> create("
+            indent {
+                +"createValue: ($enumPropertyName: $enumClassName) -> T,"
+            }
+            +"): $enumValuesClassName<T> = $enumValuesClassName("
+            indent {
+                items.forEach { (entry, property) ->
+                    +"$property = createValue($entry),"
+                }
+            }
+            +")"
         }
         +"}"
     }
