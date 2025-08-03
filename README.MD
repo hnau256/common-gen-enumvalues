@@ -160,7 +160,3 @@ enum class Side {
 
 2. Run the Gradle build to generate the corresponding `SideValues` class.
 3. Use the generated class in your code to associate values with enum entries in a type-safe manner.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
